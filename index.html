@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LUMINA — College Event Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ░░ LOADER ░░ -->
+<div id="loader" class="loader">
+  <div class="loader-ring"></div>
+  <span class="loader-text">LUMINA</span>
+</div>
+
+<!-- ░░ TOAST CONTAINER ░░ -->
+<div id="toastBox" class="toast-box"></div>
+
+<!-- ░░ NAVBAR ░░ -->
+<nav class="navbar" id="navbar">
+  <span class="nav-logo" onclick="navigate('home')">LUMINA</span>
+
+  <div class="nav-center">
+    <button class="nav-btn active" data-page="home"    onclick="navigate('home');   setActive(this)">Home</button>
+    <button class="nav-btn"        data-page="events"  onclick="navigate('events'); setActive(this)">Events</button>
+    <button class="nav-btn hidden" id="navTickets"     onclick="navigate('tickets');setActive(this)">My Tickets</button>
+    <button class="nav-btn hidden" id="navAdmin"       onclick="navigate('admin');  setActive(this)">Admin Panel</button>
+  </div>
+
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle">☀️</button>
+
+    <!-- Guest buttons -->
+    <div id="guestArea" class="guest-area">
+      <button class="btn-outline-sm" onclick="showLogin()">Log In</button>
+      <button class="btn-primary-sm" onclick="showRegister()">Sign Up</button>
+    </div>
+
+    <!-- Logged-in user chip -->
+    <div id="userArea" class="user-area" style="display:none">
+      <div class="user-chip" onclick="toggleDropdown()">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span class="user-label" id="userLabel">User</span>
+        <span>▾</span>
+      </div>
+      <div class="user-dropdown" id="userDropdown" style="display:none">
+        <div class="dd-info">
+          <span class="dd-name" id="ddName">-</span>
+          <span class="dd-role" id="ddRole">student</span>
+        </div>
+        <div class="dd-divider"></div>
+        <button onclick="navigate('tickets');closeDropdown()" id="ddTicketsBtn">🎟️ My Tickets</button>
+        <div class="dd-divider"></div>
+        <button class="dd-logout" onclick="logout()">🚪 Log Out</button>
+      </div>
+    </div>
+
+    <button class="hamburger" id="hamBtn">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mob-nav" id="mobNav">
+  <button onclick="navigate('home');   closeMob()">🏠 Home</button>
+  <button onclick="navigate('events'); closeMob()">📅 Events</button>
+  <button id="mobTickets" class="hidden" onclick="navigate('tickets');closeMob()">🎟️ My Tickets</button>
+  <button id="mobAdmin"   class="hidden" onclick="navigate('admin');  closeMob()">⚙️ Admin Panel</button>
+  <hr style="border-color:var(--bdr);margin:.5rem 0"/>
+  <button id="mobLogin"  onclick="showLogin();  closeMob()">Log In</button>
+  <button id="mobSignup" onclick="showRegister();closeMob()">Sign Up</button>
+  <button id="mobLogout" class="hidden dd-logout" onclick="logout();closeMob()">🚪 Log Out</button>
+</div>
+
+
+<!-- ══════════════════ PAGE: HOME ══════════════════ -->
+<div id="page-home" class="page active">
+
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="blob b3"></div>
+      <div class="grid-lines"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">⚡ Campus Life, Elevated</div>
+      <h1 class="hero-title">
+        <span class="line">Discover Events</span>
+        <span class="line grad-text">That Inspire</span>
+      </h1>
+      <p class="hero-sub">The premium hub for tech talks, cultural fests &amp; sports championships — with real certificates &amp; live dashboards.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="navigate('events');setActiveByName('events')">
+          Explore Events
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="btn-outline" id="heroJoinBtn">Join Free</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><span class="hstat-n" id="hs-events">0</span><span class="hstat-l">Events</span></div>
+        <div class="hstat-div"></div>
+        <div class="hstat"><span class="hstat-n" id="hs-regs">0</span><span class="hstat-l">Registrations</span></div>
+        <div class="hstat-div"></div>
+        <div class="hstat"><span class="hstat-n" id="hs-certs">0</span><span class="hstat-l">Certificates</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="float-card fc1">🚀 <span>TechFest 2025</span></div>
+      <div class="float-card fc2">🎭 <span>Cultural Night</span></div>
+      <div class="float-card fc3">🏆 <span>Certificate Ready</span></div>
+      <div class="hero-orb">LUMINA</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title">Featured <span class="accent">Events</span></h2>
+      <button class="link-btn" onclick="navigate('events');setActiveByName('events')">View All →</button>
+    </div>
+    <div class="cards-grid" id="featuredGrid"></div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <h2 class="section-title" style="margin-bottom:1.4rem">Browse by <span class="accent">Category</span></h2>
+    <div class="cats-grid">
+      <div class="cat-card" onclick="filterAndGo('Tech')">
+        <div class="cat-emoji">💻</div><div class="cat-label">Tech</div><div class="cat-count" id="cc-Tech">0 events</div>
+      </div>
+      <div class="cat-card" onclick="filterAndGo('Cultural')">
+        <div class="cat-emoji">🎭</div><div class="cat-label">Cultural</div><div class="cat-count" id="cc-Cultural">0 events</div>
+      </div>
+      <div class="cat-card" onclick="filterAndGo('Sports')">
+        <div class="cat-emoji">⚽</div><div class="cat-label">Sports</div><div class="cat-count" id="cc-Sports">0 events</div>
+      </div>
+      <div class="cat-card" onclick="filterAndGo('Workshop')">
+        <div class="cat-emoji">🛠️</div><div class="cat-label">Workshop</div><div class="cat-count" id="cc-Workshop">0 events</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-home -->
+
+
+<!-- ══════════════════ PAGE: EVENTS ══════════════════ -->
+<div id="page-events" class="page">
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">All <span class="accent">Events</span></h2>
+        <p class="section-sub">Find your next experience</p>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-pills">
+        <button class="pill active" onclick="applyFilter('All',this)">All</button>
+        <button class="pill" onclick="applyFilter('Tech',this)">💻 Tech</button>
+        <button class="pill" onclick="applyFilter('Cultural',this)">🎭 Cultural</button>
+        <button class="pill" onclick="applyFilter('Sports',this)">⚽ Sports</button>
+        <button class="pill" onclick="applyFilter('Workshop',this)">🛠️ Workshop</button>
+      </div>
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="searchInput" type="text" placeholder="Search events…" oninput="searchEvents(this.value)"/>
+      </div>
+    </div>
+    <div class="cards-grid" id="eventsGrid"></div>
+    <div id="emptyState" class="empty-state" style="display:none">
+      <div class="empty-icon">🔍</div>
+      <h3>No events found</h3>
+      <p>Try a different filter or search term</p>
+    </div>
+  </section>
+</div><!-- /page-events -->
+
+
+<!-- ══════════════════ PAGE: MY TICKETS ══════════════════ -->
+<div id="page-tickets" class="page">
+  <section class="section">
+    <h2 class="section-title" style="margin-bottom:2rem">My <span class="accent">Tickets</span> &amp; Certificates</h2>
+    <div id="ticketsGrid" class="tickets-grid"></div>
+    <div id="ticketsEmpty" class="empty-state" style="display:none">
+      <div class="empty-icon">🎟️</div>
+      <h3>No tickets yet</h3>
+      <p>Register for events to see your tickets here</p>
+      <button class="btn-primary" style="margin-top:1.25rem" onclick="navigate('events');setActiveByName('events')">Browse Events</button>
+    </div>
+  </section>
+</div><!-- /page-tickets -->
+
+
+<!-- ══════════════════ PAGE: ADMIN ══════════════════ -->
+<div id="page-admin" class="page">
+  <section class="section" style="padding-bottom:1rem">
+    <div class="section-head" style="margin-bottom:1.5rem">
+      <div>
+        <h2 class="section-title">Admin <span class="accent">Dashboard</span></h2>
+        <p class="section-sub">Manage events &amp; view registered students</p>
+      </div>
+      <button class="btn-primary" onclick="openEventForm()">+ New Event</button>
+    </div>
+
+    <div class="admin-stats-grid">
+      <div class="astat"><div class="astat-icon">📅</div><div><div class="astat-n" id="as-events">0</div><div class="astat-l">Total Events</div></div></div>
+      <div class="astat"><div class="astat-icon">🎟️</div><div><div class="astat-n" id="as-regs">0</div><div class="astat-l">Registrations</div></div></div>
+      <div class="astat"><div class="astat-icon">🏆</div><div><div class="astat-n" id="as-certs">0</div><div class="astat-l">Certs Issued</div></div></div>
+      <div class="astat"><div class="astat-icon">🗓️</div><div><div class="astat-n" id="as-upcoming">0</div><div class="astat-l">Upcoming</div></div></div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card"><div class="chart-title">Registrations by Category</div><canvas id="catChart" height="220"></canvas></div>
+      <div class="chart-card"><div class="chart-title">Registration Trend (15 days)</div><canvas id="trendChart" height="220"></canvas></div>
+    </div>
+
+    <div class="dash-label">📋 Event Management</div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Event</th><th>Category</th><th>Date</th><th>Fill Rate</th><th>Actions</th></tr></thead>
+        <tbody id="adminTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Student Registration Dashboard -->
+  <section class="section" style="padding-top:0">
+    <div class="dash-header">
+      <div class="dash-label">👥 Registered Students</div>
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="regSearchInput" type="text" placeholder="Search name, roll, dept…" oninput="filterRegTable(this.value)"/>
+      </div>
+    </div>
+
+    <div class="event-filter-row" id="eventFilterBtns">
+      <button class="pill active" onclick="filterRegByEvent('All',this)">All Events</button>
+    </div>
+
+    <div class="export-bar">
+      <span class="export-label">Export:</span>
+      <button class="btn-gold-sm" onclick="exportCSV()">⬇️ Download CSV</button>
+      <button class="btn-primary-sm" onclick="issueAllCerts()">🏆 Issue All Pending Certs</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table" id="regTable">
+        <thead>
+          <tr><th>#</th><th>Student</th><th>Event</th><th>Registered On</th><th>Status</th><th>Certificate</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="regTbody"></tbody>
+      </table>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </section>
+</div><!-- /page-admin -->
+
+
+<!-- ════════════════════════════════
+     MODAL: LOGIN
+════════════════════════════════ -->
+<div class="overlay" id="loginModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Welcome Back</h3>
+      <button class="close-btn" onclick="closeModal('loginModal')">✕</button>
+    </div>
+
+    <!-- Role tabs -->
+    <div class="role-tabs" id="loginRoleTabs">
+      <button class="role-tab active" data-role="student" onclick="selectLoginRole('student',this)">🎓 Student</button>
+      <button class="role-tab"        data-role="admin"   onclick="selectLoginRole('admin',this)">⚙️ Admin</button>
+    </div>
+
+    <!-- Student login hint -->
+    <div class="login-hint" id="loginHintStudent">
+      Use the email &amp; password you signed up with.
+    </div>
+    <!-- Admin login hint -->
+    <div class="login-hint hidden" id="loginHintAdmin">
+      Admin credentials: <strong>admin@lumina.edu</strong> / <strong>admin123</strong>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" placeholder="you@college.edu" autocomplete="email" required/>
+        <span class="field-error" id="loginEmailErr"></span>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="pw-field">
+          <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" required/>
+          <button type="button" class="pw-eye" onclick="togglePw('loginPassword',this)">👁</button>
+        </div>
+        <span class="field-error" id="loginPasswordErr"></span>
+      </div>
+      <span class="field-error" id="loginGeneralErr" style="display:block;margin-bottom:.5rem"></span>
+      <button type="submit" class="btn-primary w-full" id="loginSubmitBtn">Log In</button>
+    </form>
+    <p class="switch-link">Don't have an account? <a onclick="switchModal('loginModal','registerModal')">Sign Up</a></p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     MODAL: REGISTER (Student Only)
+════════════════════════════════ -->
+<div class="overlay" id="registerModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Create Student Account</h3>
+      <button class="close-btn" onclick="closeModal('registerModal')">✕</button>
+    </div>
+    <div class="role-info-box">🎓 Student Registration — Admins are pre-configured.</div>
+    <form id="registerForm" onsubmit="handleRegister(event)" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="regName" placeholder="Your full name" autocomplete="name" required/>
+          <span class="field-error" id="regNameErr"></span>
+        </div>
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" id="regEmail" placeholder="you@college.edu" autocomplete="email" required/>
+          <span class="field-error" id="regEmailErr"></span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Roll Number *</label>
+          <input type="text" id="regRoll" placeholder="CS2021001" required/>
+          <span class="field-error" id="regRollErr"></span>
+        </div>
+        <div class="form-group">
+          <label>Department *</label>
+          <select id="regDept" required>
+            <option value="">Select department</option>
+            <option>Computer Science</option>
+            <option>Electronics</option>
+            <option>Mechanical</option>
+            <option>Civil</option>
+            <option>Business Administration</option>
+            <option>Other</option>
+          </select>
+          <span class="field-error" id="regDeptErr"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="regPhone" placeholder="9876543210" autocomplete="tel"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Password *</label>
+          <div class="pw-field">
+            <input type="password" id="regPassword" placeholder="Min 6 characters" required minlength="6"/>
+            <button type="button" class="pw-eye" onclick="togglePw('regPassword',this)">👁</button>
+          </div>
+          <span class="field-error" id="regPasswordErr"></span>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password *</label>
+          <div class="pw-field">
+            <input type="password" id="regConfirm" placeholder="Re-enter password" required/>
+            <button type="button" class="pw-eye" onclick="togglePw('regConfirm',this)">👁</button>
+          </div>
+          <span class="field-error" id="regConfirmErr"></span>
+        </div>
+      </div>
+      <span class="field-error" id="regGeneralErr" style="display:block;margin-bottom:.5rem"></span>
+      <button type="submit" class="btn-primary w-full" id="registerSubmitBtn">Create Account</button>
+    </form>
+    <p class="switch-link">Already have an account? <a onclick="switchModal('registerModal','loginModal')">Log In</a></p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     MODAL: EVENT FORM (Admin only)
+════════════════════════════════ -->
+<div class="overlay" id="eventFormModal">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="evtFormTitle">Create New Event</h3>
+      <button class="close-btn" onclick="closeModal('eventFormModal')">✕</button>
+    </div>
+    <form id="eventForm" onsubmit="submitEventForm(event)" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Event Title *</label>
+          <input type="text" id="evtTitle" required placeholder="e.g. TechFest 2025"/>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="evtCategory" required>
+            <option value="">Select category</option>
+            <option>Tech</option><option>Cultural</option><option>Sports</option>
+            <option>Workshop</option><option>Seminar</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="evtDate" required/>
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="time" id="evtTime"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Venue *</label>
+        <input type="text" id="evtVenue" required placeholder="e.g. Main Auditorium"/>
+      </div>
+      <div class="form-group">
+        <label>Description *</label>
+        <textarea id="evtDesc" rows="3" required placeholder="Describe the event…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Max Capacity</label>
+          <input type="number" id="evtCapacity" min="1" placeholder="100"/>
+        </div>
+        <div class="form-group">
+          <label>Icon / Emoji</label>
+          <input type="text" id="evtEmoji" placeholder="🎉"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" onclick="closeModal('eventFormModal')">Cancel</button>
+        <button type="submit" class="btn-primary" id="evtSubmitBtn">Create Event</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     MODAL: EVENT DETAIL
+════════════════════════════════ -->
+<div class="overlay" id="detailModal">
+  <div class="modal modal-lg" id="detailContent"></div>
+</div>
+
+
+<!-- ════════════════════════════════
+     MODAL: REGISTER FOR EVENT
+════════════════════════════════ -->
+<div class="overlay" id="regModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Register for Event</h3>
+      <button class="close-btn" onclick="closeModal('regModal')">✕</button>
+    </div>
+    <div id="regEventBanner" class="event-banner"></div>
+    <form id="regEventForm" onsubmit="submitRegistration(event)" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="rrName" readonly style="opacity:.7"/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" id="rrPhone" placeholder="9876543210"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Department</label>
+        <select id="rrDept">
+          <option value="">Select department</option>
+          <option>Computer Science</option><option>Electronics</option>
+          <option>Mechanical</option><option>Civil</option>
+          <option>Business Administration</option><option>Other</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" onclick="closeModal('regModal')">Cancel</button>
+        <button type="submit" class="btn-primary">Register Now 🎉</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     MODAL: CERTIFICATE PREVIEW
+════════════════════════════════ -->
+<div class="overlay" id="certModal">
+  <div class="modal modal-xl">
+    <div class="modal-head">
+      <h3>🏆 Participation Certificate</h3>
+      <button class="close-btn" onclick="closeModal('certModal')">✕</button>
+    </div>
+    <div id="certWrap">
+      <canvas id="certCanvas"></canvas>
+    </div>
+    <div class="modal-footer" style="justify-content:flex-end">
+      <button class="btn-outline" onclick="closeModal('certModal')">Close</button>
+      <button class="btn-gold" onclick="downloadCert()">⬇️ Download PNG</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════
+     MODAL: VIEW REGISTRATIONS (Admin)
+════════════════════════════════ -->
+<div class="overlay" id="viewRegsModal">
+  <div class="modal modal-xl">
+    <div class="modal-head">
+      <h3 id="viewRegsTitle">Registered Students</h3>
+      <button class="close-btn" onclick="closeModal('viewRegsModal')">✕</button>
+    </div>
+    <div id="viewRegsContent"></div>
+  </div>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>
